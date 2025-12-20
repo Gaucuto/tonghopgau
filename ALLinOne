@@ -1,0 +1,40 @@
+#!name = All In One Premium
+#!desc = Lightroom + VSCO + SoundCloud + Spotify Lyrics + Bilibili + Appraven + YouTube + Locket
+#!author = Gấu Lỏz CUTO
+
+################################
+# SCRIPT
+################################
+[Script]
+
+# Lightroom
+LightRoom = type=http-response,pattern=^https:\/\/photos\.adobe\.io\/v2\/accounts.*,requires-body=1,script-path=https://raw.githubusercontent.com/litieyin/AD_VIP/main/Script/lightroom.js
+
+# VSCO
+VSCO_req = type=http-request,pattern=^https:\/\/api\.revenuecat\.com\/v\d\/subscribers\/,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/vsco.js
+VSCO_res = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/v\d\/subscribers\/,requires-body=1,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/File/vsco.js
+
+# SoundCloud
+SoundCloud = type=http-response,pattern=https:\/\/api-mobile\.soundcloud\.com\/configuration\/ios,requires-body=1,script-path=https://raw.githubusercontent.com/Maro162926/MarScript/main/soundcloud.js
+
+# Spotify Lyrics
+SpotifyLyrics = type=http-response,pattern=^https:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/,requires-body=1,binary-body-mode=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-lyric.js,argument=appid=YOUR_APPID&securityKey=YOUR_KEY
+
+# Bilibili
+Bilibili = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/x\/v2\/account\/myinfo.*,requires-body=1,script-path=https://raw.githubusercontent.com/deezertidal/private/master/js-backup/Script/bilibili_json.js
+
+# Appraven
+Appraven = type=http-response,pattern=^https:\/\/appraven\.net\/AppRaven\/(app|social|buy),requires-body=1,script-path=https://raw.githubusercontent.com/deezertidal/private/master/js-backup/Crack/appraven.js
+
+# YouTube
+youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch),requires-body=1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js
+
+# Locket
+revenuecat = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^\/]+$),requires-body=1,script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js
+deleteHeader = type=http-request,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/deleteHeader.js
+
+################################
+# MITM (GỘP TẤT CẢ)
+################################
+[MITM]
+hostname = %APPEND% photos.adobe.io, api.revenuecat.com, api-mobile.soundcloud.com, spclient.wg.spotify.com, app.bilibili.com, appraven.net, *.googlevideo.com, youtubei.googleapis.com, www.youtube.com, s.youtube.com
