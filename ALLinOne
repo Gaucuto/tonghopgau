@@ -1,48 +1,81 @@
-#!name=SoundCloud+ Spotify Lyrics + YouTube Remove Ads + Locket Premium
-#!desc=Gộp SoundCloud+, Spotify歌词翻译, YouTube Remove Ads & Unlock Locket Premium
+#!name = All In One ULTIMATE
+#!desc = YouTube + Locket + SoundCloud + Spotify + Bilibili + Appraven + AlightMotion + PicsArt + Wink + Truecaller + Lightroom + Kinemaster + CamScanner + BeautyPlus
+#!author = Gấu Lỏz CUTO
 
-######################################
-# 1. RULE – YouTube (UDP Ads Block)
-######################################
+################################
+# RULE – YOUTUBE
+################################
 [Rule]
 AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
 AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
 
-######################################
-# 2. URL Rewrite – YouTube Ads
-######################################
+################################
+# MAP LOCAL – YOUTUBE
+################################
+[Map Local]
+^https?:\/\/[\w\-]+\.googlevideo\.com\/initplayback.+&oad data-type=text data="" status-code=200
+^https?:\/\/[\w\-]+\.googlevideo\.com\/get_video_info.+&oad data-type=text data="" status-code=200
+
+################################
+# URL REWRITE – YOUTUBE
+################################
 [URL Rewrite]
-(^https?:\/\/[\w\-]+\.googlevideo\.com\/\?(?!dclk_video_ads).+)&ctier=(&.+?)?,ctier,.+ $1$2$3 302
-https?:\/\/[\w\-]+\.googlevideo\.com\/(?!dclk_video_ads|videoplayback\?).+&oad _ reject-200
 ^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads _ reject-200
-^https?:\/\/(www|s)\.youtube\.com\/pagead|ptracking _ reject-200
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) _ reject-200
 ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?.+adcontext _ reject-200
+https?:\/\/[\w\-]+\.googlevideo\.com\/.+&oad _ reject-200
 
-######################################
-# 3. SCRIPT – SoundCloud+
-######################################
+################################
+# SCRIPT – TẤT CẢ APP
+################################
 [Script]
-soundcloud_plus = type=http-response,pattern=https://api-mobile.soundcloud.com/configuration/ios,requires-body=1,script-path=https://raw.githubusercontent.com/Marol62926/MarScrpt/main/soundcloud.js
 
-######################################
-# 4. SCRIPT – Spotify Lyrics Translate
-######################################
-spotify_lyrics_translate = type=http-response,pattern=^https:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/,requires-body=1,binary-body-mode=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-lyric.js,argument=appid=此处填入APPID&securityKey=此处填入密钥
+# YouTube
+youtube_req = type=http-request,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|get_watch),requires-body=1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.request.js
+youtube_res = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|get_watch),requires-body=1,binary-body-mode=1,max-size=-1,script-path=https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js
 
-######################################
-# 5. SCRIPT – YouTube Remove Ads + Lyrics
-######################################
-youtube_response = type=http-response,pattern=^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel_watch_sequence|guide|account\/get_settings|get_watch),requires-body=1,max-size=-1,binary-body-mode=1,script-path=https://raw.githubusercontent.com/Maasea/smodule/master/Script/Youtube/youtube.response.js,argument={"lyricLang":"{歌词翻译语言}","captionLang":"{字幕翻译语言}","blockUpload":"{屏蔽上传按钮}","blockImmersive":"{屏蔽沉浸按钮}","debug":"{启用调试模式}"}
+# Locket
+Locket_res = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^\/]+$),requires-body=true,script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js
+Locket_req = type=http-request,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/deleteHeader.js
 
-######################################
-# 6. SCRIPT – Locket Premium
-######################################
-revenuecat_unlock = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers\/[^\/]+$),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js,requires-body=true,max-size=-1,timeout=60
+# SoundCloud
+SoundCloud = type=http-response,pattern=https:\/\/api-mobile\.soundcloud\.com\/configuration\/ios,requires-body=1,script-path=https://raw.githubusercontent.com/Maro162926/MarScript/main/soundcloud.js
 
-revenuecat_delete_header = type=http-request,pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers),script-path=https://raw.githubusercontent.com/vuong2023/shad/main/js/deleteHeader.js,timeout=60
+# Spotify Lyrics
+SpotifyLyrics = type=http-response,pattern=^https:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/,requires-body=1,binary-body-mode=1,max-size=0,script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/spotify-lyric.js,argument=appid=填APPID&securityKey=填KEY
 
-######################################
-# 7. MITM – Gộp toàn bộ hostname
-######################################
+# Bilibili
+Bilibili = type=http-response,pattern=^https:\/\/app\.bilibili\.com\/x\/v2\/account\/myinfo.*,requires-body=1,script-path=https://raw.githubusercontent.com/deezertidal/private/master/js-backup/Script/bilibili_json.js
+
+# Appraven
+Appraven = type=http-response,pattern=^https:\/\/appraven\.net\/AppRaven\/(app|social|buy),requires-body=1,script-path=https://raw.githubusercontent.com/deezertidal/private/master/js-backup/Crack/appraven.js
+
+# Alight Motion
+AlightMotion = type=http-response,pattern=^https:\/\/us-central1-alight-creative\.cloudfunctions\.net\/getAccountStatusAndLicenses,requires-body=true,max-size=131072,timeout=10,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/AlightMotion.js
+
+# PicsArt
+PicsArt = type=http-request,pattern=^https:\/\/api\.picsart\.com\/gw-v2\/shop\/subscription\/apple\/purchases,requires-body=true,timeout=60,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/PicsArt.js
+
+# Wink
+Wink = type=http-response,pattern=^https:\/\/api-sub\.meitu\.com\/v2\/user\/vip_info_by_group\.json,requires-body=1,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/WinkVipCrack.js
+
+# Truecaller
+Truecaller = type=http-response,pattern=^https:\/\/premium\.(.+)\.truecaller\.com\/v\d\/(subscriptions|products\/apple),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/TrueCaller.js
+
+# Lightroom
+Lightroom = type=http-response,pattern=^https:\/\/photos\.adobe\.io\/v\d\/accounts,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/lightroom.js
+
+# Kinemaster
+Kinemaster = type=http-response,pattern=^https:\/\/api-account\.kinemasters\.com\/v\d\/user\/subscribe$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/Kinemaster.js
+
+# CamScanner
+CamScanner = type=http-response,pattern=https:\/\/(api|api-cs.*)\.intsig\.net\/purchase\/cs\/query_prop,requires-body=1,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/camScanner.js
+
+# BeautyPlus
+BeautyPlus = type=http-response,pattern=https:\/\/(api\.mr\.pixocial\.com|newbeee-api\.beautyplus\.com)\/v1\/manual_unlock|newbeee-api\.beautyplus\.com\/api\/v1\/asset\/balance,requires-body=true,max-size=-1,timeout=60,script-path=https://raw.githubusercontent.com/duyvinh09/Module_IOS/refs/heads/main/js/BeautyPlus.js
+
+################################
+# MITM – GỘP TẤT CẢ HOST
+################################
 [MITM]
-hostname = %APPEND% api-mobile.soundcloud.com,spclient.wg.spotify.com,*.googlevideo.com,googlevideo.com,www.youtube.com,s.youtube.com,youtubei.googleapis.com,api.revenuecat.com
+hostname = %APPEND% *.googlevideo.com, googlevideo.com, youtubei.googleapis.com, www.youtube.com, s.youtube.com, api.revenuecat.com, api-mobile.soundcloud.com, spclient.wg.spotify.com, app.bilibili.com, appraven.net, us-central1-alight-creative.cloudfunctions.net, api.picsart.com, api-sub.meitu.com, premium.truecaller.com, photos.adobe.io, api-account.kinemasters.com, api.intsig.net, api-cs.intsig.net, api.mr.pixocial.com, newbeee-api.beautyplus.com
